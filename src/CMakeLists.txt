@@ -27,20 +27,22 @@ set(FMUS_SENSORS_SOURCES
 )
 
 set(FMUS_ACTUATORS_SOURCES
-    # actuators/motor.cpp
-    # actuators/relay.cpp
-    # actuators/servo.cpp
+    actuators/actuators.cpp
+    actuators/motor.cpp
+    actuators/relay.cpp
+    actuators/servo.cpp
 )
 
 set(FMUS_COMMS_SOURCES
     comms/spi.cpp
     comms/i2c.cpp
-    # comms/uart.cpp
+    comms/uart.cpp
 )
 
 set(FMUS_DSP_SOURCES
-    # dsp/filter.cpp
-    # dsp/fft.cpp
+    dsp/dsp.cpp
+    dsp/filter.cpp
+    dsp/fft.cpp
 )
 
 set(FMUS_AI_SOURCES
@@ -85,8 +87,10 @@ else()
     # Link with dependencies
     # target_link_libraries(fmus-embed PRIVATE Threads::Threads)
 
-    # Add dependency on copy_dlls
-    add_dependencies(fmus-embed copy_dlls)
+    # Add dependency on copy_dlls (Windows only)
+    if(WIN32 AND TARGET copy_dlls)
+        add_dependencies(fmus-embed copy_dlls)
+    endif()
 endif()
 
 # Set the target properties

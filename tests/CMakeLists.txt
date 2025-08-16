@@ -2,50 +2,71 @@
 enable_testing()
 
 # Find GTest
-find_package(GTest REQUIRED)
+find_package(GTest QUIET)
+
+if(NOT GTest_FOUND)
+    message(STATUS "GTest not found, trying to install...")
+    # Try to find system GTest
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(GTEST gtest)
+        pkg_check_modules(GTEST_MAIN gtest_main)
+    endif()
+
+    if(NOT GTEST_FOUND)
+        message(WARNING "GTest not found. Install with: sudo apt-get install libgtest-dev cmake && cd /usr/src/gtest && sudo cmake . && sudo make && sudo cp lib/*.a /usr/lib")
+        return()
+    endif()
+endif()
 
 # Define test sources for each module
 set(FMUS_CORE_TEST_SOURCES
-    # core/error_test.cpp
-    # core/logging_test.cpp
-    # core/memory_test.cpp
+    core/error_test.cpp
+    core/logging_test.cpp
+    core/memory_test.cpp
+    core/result_test.cpp
 )
 
 set(FMUS_MCU_TEST_SOURCES
-    # mcu/gpio_test.cpp
-    # mcu/timer_test.cpp
-    # mcu/adc_test.cpp
+    mcu/gpio_test.cpp
+    mcu/timer_test.cpp
+    mcu/adc_test.cpp
+    mcu/platform_test.cpp
 )
 
 set(FMUS_GPIO_TEST_SOURCES
-    # gpio/gpio_test.cpp
+    gpio/gpio_test.cpp
 )
 
 set(FMUS_SENSORS_TEST_SOURCES
-    # sensors/sensor_base_test.cpp
-    # sensors/accelerometer_test.cpp
-    # sensors/temperature_test.cpp
+    sensors/sensor_base_test.cpp
+    sensors/accelerometer_test.cpp
+    sensors/temperature_test.cpp
+    sensors/gyroscope_test.cpp
+    sensors/light_test.cpp
+    sensors/pressure_test.cpp
 )
 
 set(FMUS_ACTUATORS_TEST_SOURCES
-    # actuators/motor_test.cpp
-    # actuators/relay_test.cpp
-    # actuators/servo_test.cpp
+    actuators/motor_test.cpp
+    actuators/relay_test.cpp
+    actuators/servo_test.cpp
 )
 
 set(FMUS_COMMS_TEST_SOURCES
-    # comms/spi_test.cpp
-    # comms/i2c_test.cpp
-    # comms/uart_test.cpp
+    comms/spi_test.cpp
+    comms/i2c_test.cpp
+    comms/uart_test.cpp
 )
 
 set(FMUS_DSP_TEST_SOURCES
-    # dsp/filter_test.cpp
-    # dsp/fft_test.cpp
+    dsp/filter_test.cpp
+    dsp/fft_test.cpp
 )
 
 set(FMUS_AI_TEST_SOURCES
-    # ai/neural_net_test.cpp
+    ai/pid_test.cpp
+    ai/neural_net_test.cpp
 )
 
 set(FMUS_NET_TEST_SOURCES
@@ -93,8 +114,10 @@ target_include_directories(fmus_embed_tests PRIVATE
     ${GTEST_INCLUDE_DIR}
 )
 
-# Add DLL dependency
-add_dependencies(fmus_embed_tests copy_dlls)
+# Add DLL dependency (Windows only)
+if(WIN32 AND TARGET copy_dlls)
+    add_dependencies(fmus_embed_tests copy_dlls)
+endif()
 
 # Register tests with CTest
 add_test(NAME fmus_embed_tests COMMAND fmus_embed_tests)

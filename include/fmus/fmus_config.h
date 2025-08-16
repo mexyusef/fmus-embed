@@ -6,8 +6,8 @@
 
 // Library version
 #define FMUS_EMBED_VERSION_MAJOR 0
-#define FMUS_EMBED_VERSION_MINOR 1
-#define FMUS_EMBED_VERSION_PATCH 0
+#define FMUS_EMBED_VERSION_MINOR 0
+#define FMUS_EMBED_VERSION_PATCH 1
 #define FMUS_EMBED_VERSION_STRING "0.0.1"
 
 // Platform detection

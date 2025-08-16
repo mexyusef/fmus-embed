@@ -40,11 +40,13 @@
 // Communications module
 #include "comms/spi.h"
 #include "comms/i2c.h"
-// #include "comms/uart.h"
+#include "comms/uart.h"
+
+// Actuators module
+#include "actuators/actuators.h"
 
 // DSP module
-// #include "dsp/filter.h"
-// #include "dsp/fft.h"
+#include "dsp/dsp.h"
 
 // AI module
 // #include "ai/neural_net.h"

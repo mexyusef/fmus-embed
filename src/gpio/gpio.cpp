@@ -64,7 +64,7 @@ GPIO::~GPIO() {
         if (unexport_fd >= 0) {
             char pin_str[8];
             int len = snprintf(pin_str, sizeof(pin_str), "%u", m_pin);
-            write(unexport_fd, pin_str, len);
+            ::write(unexport_fd, pin_str, len);
             close(unexport_fd);
         }
         delete impl;
@@ -121,7 +121,7 @@ core::Result<void> GPIO::init(GPIODirection direction) {
 
     char pin_str[8];
     int len = snprintf(pin_str, sizeof(pin_str), "%u", m_pin);
-    write(export_fd, pin_str, len);
+    ::write(export_fd, pin_str, len);
     close(export_fd);
 
     // Give the system time to create the GPIO files
@@ -136,7 +136,7 @@ core::Result<void> GPIO::init(GPIODirection direction) {
 
     // Set direction
     const char* dir_str = (direction == GPIODirection::Output) ? "out" : "in";
-    write(impl->direction_fd, dir_str, strlen(dir_str));
+    ::write(impl->direction_fd, dir_str, strlen(dir_str));
 
     // Open value file
     snprintf(path, sizeof(path), "/sys/class/gpio/gpio%u/value", m_pin);
@@ -187,7 +187,7 @@ core::Result<void> GPIO::setDirection(GPIODirection direction) {
 
     const char* dir_str = (direction == GPIODirection::Output) ? "out" : "in";
     lseek(impl->direction_fd, 0, SEEK_SET);
-    write(impl->direction_fd, dir_str, strlen(dir_str));
+    ::write(impl->direction_fd, dir_str, strlen(dir_str));
     m_direction = direction;
 #endif
 
@@ -232,7 +232,7 @@ core::Result<void> GPIO::setEdge(GPIOEdge edge) {
     }
 
     lseek(impl->edge_fd, 0, SEEK_SET);
-    write(impl->edge_fd, edge_str, strlen(edge_str));
+    ::write(impl->edge_fd, edge_str, strlen(edge_str));
     m_edge = edge;
 #endif
 
@@ -287,7 +287,7 @@ core::Result<void> GPIO::write(bool value) {
 
     const char val_str = value ? '1' : '0';
     lseek(impl->value_fd, 0, SEEK_SET);
-    write(impl->value_fd, &val_str, 1);
+    ::write(impl->value_fd, &val_str, 1);
 #endif
 
     return core::Result<void>();
